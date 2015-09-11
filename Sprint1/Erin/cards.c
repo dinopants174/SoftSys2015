@@ -4,10 +4,11 @@ int main()
 {
 	char card_name[3];
 	int count =0;
-	int val =1;
-	while (val) {
+	
+	while (card_name[0]!='X') {
 		puts("Enter the card name:");
 		scanf("%2s",card_name);
+		int val =0;
 		switch(card_name[0]) {
 			case 'K':
 			case 'Q':
@@ -18,8 +19,7 @@ int main()
 				val=11;
 				break;
 			case 'X':
-				val=0;
-				break;
+				continue;
 			default:
 				val=atoi(card_name);
 				if ((val <0) || val >10) {
