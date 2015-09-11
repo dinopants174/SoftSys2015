@@ -4,7 +4,7 @@ int main()
 {
 	char card_name[3];
 	int count =0;
-	int val =0;
+	int val =1;
 	while (val) {
 		puts("Enter the card name:");
 		scanf("%2s",card_name);
