@@ -22,8 +22,9 @@ int main()
 				continue;
 			default:
 				val=atoi(card_name);
-				if ((val <0) || val >10) {
+				if ((val <1) || val >10) {
 					puts("Number cards are between 1 and 10");
+					puts("Face Cards are A, K, Q, J");
 					continue;
 				}
 		}	
