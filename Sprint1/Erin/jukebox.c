@@ -7,7 +7,7 @@ char tracks[][80] = {
 	"Dancing with a Dork",
 	"From here to maternity",
 	"The girl from Iwo Jima",
-}
+};
 
 void find_track(char search_for[]) {
 	int i;
