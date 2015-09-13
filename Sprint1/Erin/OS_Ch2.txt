@@ -1,0 +1,9 @@
+1) Amazon prime real world example of virtualization.  As a user, it seems like every every prime product is available to you in two days - for the same cost - regardless of where the item comes from.  In reality, amazon probably spends varying amounts of effort/money to get each product to you.  The cost of this virtualization is that amazon employees regularly cry at their desks.
+
+2) A program is a piece of code that does a thing.  A process is this code, as well as all of the memory spaces and libraries that the code needs to run.
+
+3) The purpose of abstraction is to enable users not to have to think about everything that goes on.  It places emphasis on what happens, not how it happens.  It creates the illusion that things are much simpler that they actually are.
+
+4) The kernel is the part of the operating system that manages threading
+
+5) A daemon is a process called by the OS that runs in the background to help execute higher level processes.
