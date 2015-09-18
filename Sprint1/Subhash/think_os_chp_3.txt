@@ -1,0 +1,9 @@
+1) You need 6 because 32 (2^5) is not enough.
+
+2) 4294967296 characters
+
+3) Memory is RAM (Random Access Memory) where values and variables that change and are manipulated are stored, and Storage will refer to HDD and SSD where data and files are stored long-term.
+
+4) GiB is Gibibyte, which is 2^30 bytes (binary), and GB is a gigabyte, which is 10^9 (decimal).
+
+5)  
