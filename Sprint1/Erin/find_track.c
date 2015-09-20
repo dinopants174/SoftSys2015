@@ -41,6 +41,7 @@ void find_track_regex(char pattern[])
 	regex_t regex;
 	int reti;
 	char msgbuf[100];
+	int found=0;
 
 	/* Compile regular expression */
 	reti = regcomp(&regex, pattern, 0);
@@ -54,15 +55,22 @@ void find_track_regex(char pattern[])
 		reti = regexec(&regex, tracks[i], 0, NULL, 0);
 		if (!reti) {
 		    printf("Track %i- %s\n",i+1,tracks[i]);
+		    found=1;
 		}
 		else if (reti == REG_NOMATCH) {
-		    puts("No match");
+			//printf("No Match");
+		    // Dont print things cause that is annoying
 		}
 		else {
 		    regerror(reti, &regex, msgbuf, sizeof(msgbuf));
 		    fprintf(stderr, "Regex match failed: %s\n", msgbuf);
-		}	 
+		}
 	}
+	if (!found)
+	{
+		printf("No Matches Found\n");
+	}	 
+	
 
 	/* Free compiled regular expression if you want to use the regex_t again */
 	regfree(&regex);
