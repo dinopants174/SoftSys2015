@@ -5,5 +5,7 @@ The files in this folder:
 3- OS_Ch3.txt - Answers to Allen's Questions for the OS book Ch 3
 4- aspace.c - Maps my memory space
 5- cards.c - Card counting code from HFC Ch 1
-6- cards_rf.c - Refactoring cards.c to have functions.  Not working ATM.
-7- jukebox.c - The start of the jukebox exercises in CH2.5 of HFC
+6- cards_rf.c - Refactoring cards.c to have functions.
+7- jukebox.c - The jukebox exercises in CH 2.5 of HFC
+8- find_track.c - Refactored to use regex instead of strstr()
+
