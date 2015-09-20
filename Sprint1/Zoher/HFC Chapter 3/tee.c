@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 	put into. The user can supply a -a flag. -a appends the stdin to files
 	*/
 	int count = 0;	//used to loop through the user-provided files
-	char ch;	//used for the options -a and -t
+	char ch;	//used for the options -a
 	char *input = "";	//used to hold the provided input on -t option
 	char input2[1000];	//used for reading from stdin
 	int a_stat;	//0 if -a option is not provided, 1 if it is
