@@ -35,3 +35,36 @@ You could use a list in Python for a sparse array or a list of lists to represen
 **8) What is a context switch?**
 
 A context switch is the mechanism by which the operating system can interrupt a running process, save its state, and then run another process.
+
+--------------------------------------------------
+
+**1) Add a second call to malloc and check whether the heap on your system grows up (toward larger addresses).  
+2) Add a function that prints the address of a local variable, and check whether the stack grows down.  
+3) Choose a random number between 1 and 32, and allocate two chunks with that size.  How much space is there between them?  Hint: Google knows how to subtract hexadecimal numbers.**
+
+The output of my version of aspace.c looks like this:
+
+-----------------------  
+Address of main is 0x                    10bd71c80  
+Address of global is 0x                  10bd72020  
+-----------------------  
+Address of local is 0x                   7fff53e8e9f8  
+Address of another local variable is 0x  7fff53e8e97c  
+The stack has grown down  
+-----------------------
+Address of heap1 is 0x                   7fc832404bc0  
+Address of heap2 is 0x                   7fc832404c40  
+The heap has grown up  
+-----------------------  
+Address of rando1 is 0x                  7fc832404cc0  
+Address of rando2 is 0x                  7fc832404cd0  
+The difference between them is 16 which is the size allocated per rando  
+
+where heap1 and heap2 are the pointer variables that called malloc and show that the heap has grown upward, where local and another local variable are in the stack and show that the stack has grown upward, and where the randos are have been allocated 16 bytes using malloc and where the difference between their addresses was found to be 16 bytes.
+
+When we tested aspace.c with different malloc values like 20, we found the difference between them was 32 and this may have to do with the length of the word that malloc allocates when we call it.
+
+
+
+
+
