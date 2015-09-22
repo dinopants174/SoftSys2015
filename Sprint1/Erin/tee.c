@@ -14,11 +14,9 @@ char line[80];
 	while ((ch = getopt(argc,argv,"ai")) != EOF)
 		switch (ch) {
 			case 'a':
-				printf("Case -a detected \n" );
 				a=1;
 				break;
 			case 'i':
-				printf("Case -i detected \n" );
 				i=1;
 				break;
 			default:
@@ -29,13 +27,23 @@ char line[80];
 
 		
 	// printf("%i\n",argc );
-	for (count=1; count <argc; count++) { // Ignore the 'file' input
-		printf("%s\n", argv[count]);
-		FILE *file1=fopen(argv[count],"w");
-		while (scanf("%79[^\n]\n", line) == 1) {
-			fprintf(file1, "%s\n", line);
+	FILE *filep[argc];
+	for (count=0; count <argc-1; count++) { // Ignore the 'file' input
+		printf("%i %s\n",count,argv[count+1] );
+		//FILE *filep[count];
+		filep[count]=fopen(argv[count+1],"w");// Ignore the 'file' input
+	}
+	while (scanf("%79[^\n]\n", line) == 1) {
+		//FILE *filep[];
+		for (count=0; count <argc-1; count++) {		
+			printf("%i\n", count);
+			fprintf(filep[count],"%s\n",line);
 		}
-		printf("done with %s\n", argv[count]);
-		fclose(file1);
+	}
+
+	for (count=0; count <argc-1; count++) { // Ignore the 'file' input
+		printf("%i %s\n",count,argv[count+1] );
+		//FILE *filep[count];
+		fclose(filep[count]);
 	}
 }
