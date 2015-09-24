@@ -27,6 +27,10 @@ char line[80];
 		argv += optind;
 
 	if (a) opt='a';
+	if (i) {
+		fprintf(stderr, "I don't know what -i does and did nothing with this option\n" );
+	}
+
 
 	FILE *filep[argc];
 	for (count=0; count <argc-1; count++) { 
