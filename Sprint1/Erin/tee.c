@@ -9,6 +9,7 @@ char ch;
 int count=0;
 int a;
 int i;
+char opt='w';
 char line[80];
 
 	while ((ch = getopt(argc,argv,"ai")) != EOF)
@@ -25,9 +26,11 @@ char line[80];
 		argc -= optind; 
 		argv += optind;
 
+	if (a) opt='a';
+
 	FILE *filep[argc];
 	for (count=0; count <argc-1; count++) { 
-		filep[count]=fopen(argv[count+1],"w");// Ignore the 'file' input
+		filep[count]=fopen(argv[count+1],&opt);// Ignore the 'file' input
 	}
 	while (scanf("%79[^\n]\n", line) == 1) {
 		for (count=0; count <argc-1; count++) {		
