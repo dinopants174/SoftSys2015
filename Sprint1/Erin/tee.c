@@ -25,25 +25,18 @@ char line[80];
 		argc -= optind; 
 		argv += optind;
 
-		
-	// printf("%i\n",argc );
 	FILE *filep[argc];
-	for (count=0; count <argc-1; count++) { // Ignore the 'file' input
-		printf("%i %s\n",count,argv[count+1] );
-		//FILE *filep[count];
+	for (count=0; count <argc-1; count++) { 
 		filep[count]=fopen(argv[count+1],"w");// Ignore the 'file' input
 	}
 	while (scanf("%79[^\n]\n", line) == 1) {
-		//FILE *filep[];
 		for (count=0; count <argc-1; count++) {		
-			printf("%i\n", count);
 			fprintf(filep[count],"%s\n",line);
 		}
+		printf("%s\n",line); // Prints to stdout
 	}
 
 	for (count=0; count <argc-1; count++) { // Ignore the 'file' input
-		printf("%i %s\n",count,argv[count+1] );
-		//FILE *filep[count];
 		fclose(filep[count]);
 	}
 }
