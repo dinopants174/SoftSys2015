@@ -7,8 +7,8 @@ int main(int argc, char *argv[])
 {
 char ch;
 int count=0;
-int a;
-int i;
+int a=0;
+int i=0;
 char opt='w';
 char line[80];
 
