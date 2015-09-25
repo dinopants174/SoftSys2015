@@ -1,0 +1,7 @@
+1) One abstraction is that all the information- the bytes- are stored together in a file of arbitrary size.  In reality memory is in blocks, and one block may include mulitple files, or one file may span muplitiple blocks.
+2) I would imagine that the name of the file, the block(s) and offset of the file data, what parts of the file have already been read into volitile memory, and what blocks are waiting to be read. 
+3) Some operating systems make guesses about what data your program will request next, and they will start loading that data before it is ever requested.  If the OS was right, that data will load faster (because it has aready starting loading at the time of the request), and if the OS was wrong, it will just discard the data and preform the next request.
+4) The os may have written the file in volitile memory tepmorarily because it predicted that you would be modifying the file contents soon anyway.  Putting the file in volitile memory makes it much faster to modify, but does not actually *save* the file.
+5)
+6) Fragmentation is 
+7)
