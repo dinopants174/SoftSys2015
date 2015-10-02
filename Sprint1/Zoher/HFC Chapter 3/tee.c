@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 		argc -= optind;	//indicates that we are done dealing with the options
 		argv += optind;
 
-		scanf("%999[^\n]", input);	//reads from stdin
+		scanf("%999[^\n\t]", input);	//reads from stdin
 		printf("%s\n", input);		//prints out what was read from stdin to
 		//stdout
 
