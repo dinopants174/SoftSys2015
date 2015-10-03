@@ -19,9 +19,20 @@ The decimal output is 244, which is 0b11110100 and that in two's complement is e
 5) 
 
 #include <stdio.h>
-int main()
+#include <stdlib.h>
+int main(int argc, char *arg[])
 {
-    int a=12,b=255;
-    printf("Output=%d",(a^b)+1;
+    int u;
+    int flip = 32;
+    char input[100];
+    printf("lower-case string:\n")
+    scanf("%8s\n", input);
+
+    for(u=0;u<sizeof(input);u++)
+    {
+    	input[u] = (input[u]^flip);
+    }
+
+    printf("%s\n", input);
     return 0;
 }
