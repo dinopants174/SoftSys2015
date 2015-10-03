@@ -1,10 +1,10 @@
 #include <stdio.h>
 
-typedf struct { 
+typedef struct { 
 	float tank_capacity;
 	int tank_psi;
 	const char *suit_material; 
-}kit;
+}equipment;
 
 typedef struct scuba { 
 	const char *name;
@@ -17,6 +17,7 @@ void badge(diver d) {
 }
 
 int main() {
+	diver randy = {"Randy", {5.5, 3500, "Neoprene"}};
 	badge(randy);
 return 0;
 }
