@@ -6,4 +6,4 @@ Sprint 2
 
 **hw06** contains an screen shot after I run the code "ps aux --sort rss" in my command line interface. And it seems that the process takes the most RSS is google chrome. **hw06** also contains list.c, in which I implements several methods for the list class: 
 
-I didn't have a digital version of my answers to questions in ThinkOS, since personally, answering the questions in my head to help me review certain chapters and later discussing with my teammates is more efficient for me.
+I didn't have a digital version of my answers to questions in ThinkOS as well as LBOS, since personally, answering the questions in my head to help me review certain chapters and later discussing with my teammates is more efficient for me.
