@@ -12,7 +12,7 @@
 	to end the string
 */
 
-void remove(char s[])
+void replace(char s[])
 {
     char *ptr = strchr(s, '\n');
     if (ptr) {
@@ -25,7 +25,7 @@ int main(int argc, char *argv[]){
 	char input[80]; 
     printf("Convert from lower-case to upper: ");
     fgets(input, 80, stdin);
-    rstrip(input);
+    replace(input);
 
     for (i = 0; i <= sizeof(input) -1; i++){
         if (input[i] == '\0'){
@@ -41,6 +41,8 @@ int main(int argc, char *argv[]){
     	char res = ic;
     	printf("%c", res);
     }
+
+    printf("\n");
 
     return 0;
 }
