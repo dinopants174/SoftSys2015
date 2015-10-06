@@ -53,7 +53,16 @@ void push(Node **head, int val) {
 // Remove the first element with the given value; return the number
 // of nodes removed.
 int remove_by_value(Node **head, int val) {
+    Node *current = *head;
 
+    while (current != NULL) {
+    	printf("val %i\n",current->val );
+    	if (current->val == val) {
+    		printf("is equal\n");
+    		// pop(&current);
+    	}
+        current = current->next;
+    }
     return 0;
 }
 
