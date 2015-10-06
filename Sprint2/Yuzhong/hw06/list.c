@@ -7,12 +7,13 @@ License: Creative Commons Attribution-ShareAlike 3.0
 
 */
 
+
 #include <stdio.h>
 #include <stdlib.h>
 
 typedef struct node {
     int val;
-    struct node *next;
+    struct node * next;
 } Node;
 
 Node *make_node(int val, Node *next) {
@@ -34,29 +35,68 @@ void print_list(Node *head) {
 int pop(Node **head) {
     int retval;
     Node *next_node;
+    Node *first = *head;
 
-    if (*head == NULL) {
+    if (first == NULL) {
         return -1;
     }
 
-    next_node = (*head)->next;
-    retval = (*head)->val;
-    free(*head);
+    next_node = first->next;
+    retval = first->val;
+    free(first);
     *head = next_node;
 
     return retval;
 }
 
+// int pop(Node **head) {
+//     int retval;
+//     Node *next_node;
+
+//     if (*head == NULL) {
+//         return -1;
+//     }
+
+//     next_node = (*head)->next;
+//     retval = (*head)->val;
+//     free(*head);
+//     *head = next_node;
+
+//     return retval;
+// }
+
 // Add a new element to the beginning of the list.
 void push(Node **head, int val) {
-    Node *new_node = make_node(int val, head);
-    *head = new_node;    
+    Node *new_node = make_node(val, *head);
+    *head = new_node;
 }
 
 // Remove the first element with the given value; return the number
 // of nodes removed.
+// int remove_by_value(Node **head, int val) {
+//     Node *i = *head;
+
+//     if (i == NULL) return 0;
+
+//     if (i -> val == val) {
+//         pop(head);
+//         return 1;
+//     }
+
+//     for (; i->next != NULL; i = i -> next) {
+//         if (i -> next -> val == val) {
+//             i->next = (i->next)->next;
+//             free(i ->next);
+//             return 1;
+//         }
+//     }
+
+//     return 0;
+// }
+
 int remove_by_value(Node **head, int val) {
     Node *i = *head;
+    Node *target;
 
     if (i == NULL) return 0;
 
@@ -67,13 +107,16 @@ int remove_by_value(Node **head, int val) {
 
     for (; i->next != NULL; i = i -> next) {
         if (i -> next -> val == val) {
-            pop(i -> next);
+            target = i->next;
+            i->next = target->next;
+            free(target);
             return 1;
         }
     }
 
     return 0;
 }
+
 
 // Reverse the elements of the list without allocating new nodes.
 void reverse(Node **head) {
@@ -109,6 +152,5 @@ int main() {
     remove_by_value(&test_list, 7);
 
     reverse(&test_list);
-
     print_list(test_list);
 }

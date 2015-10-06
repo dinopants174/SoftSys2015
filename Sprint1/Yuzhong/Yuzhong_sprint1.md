@@ -8,6 +8,4 @@ Sprint 1
 
 **hw03** contains tee.c which writes or append user's std input into several files. In addition, **hw02** contains a folder **GPS exe**, which includes all the exercises in chapter 3 of ead First C. This exercises aim to teach users how to build a small tool as well as using piping in linux.
 
-**hw04** includes
-
 I didn't have a digital version of my answers to questions in ThinkOS, since personally, answering the questions in my head to help me review certain chapters and later discussing with my teammates is more efficient for me.
