@@ -1,6 +1,6 @@
 Yuzhong Huang
 SoftSys 2015  
-Sprint 1
+Sprint 2
 
 **hw05** contains four folders: **book exercise**, **float**, **shift** and **string**. In folder **book exercise**, I include the struct sample "turtle.c", which is used to familiar myself with struct and how to use pointer with struct; **float** includes the exercise for Head First C chapter 5, including picture showing the distribution of the 1000 random number, as well as compiled program and compared result; **shift** has the program which negates 12 by shifting and perform bit operations on the variable; **string** contains the exercise of Think OS, in which it asks us to uppercase a lowercase string by using bit operation.
 
