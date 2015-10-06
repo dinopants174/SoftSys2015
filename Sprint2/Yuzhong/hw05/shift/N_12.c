@@ -1,5 +1,10 @@
 #include <stdio.h>
 
+/*
+	this program negates value '12' by performing 
+	bit operation XOR
+*/
+
 int main () {
 	//assign 12 to 'x' and perform XOR operation on 'x' to see if we can get -12
 	int x = 12;
