@@ -23,9 +23,10 @@ void print_list(Node *head) {
     Node *current = head;
 
     while (current != NULL) {
-        printf("%d\n", current->val);
+        printf("%d, ", current->val);
         current = current->next;
     }
+    printf("\n");
 }
 
 int pop(Node **head) {
@@ -77,25 +78,66 @@ int remove_by_value(Node **head, int val) {
 
 // // Reverse the elements of the list without allocating new nodes.
 void reverse(Node **head) {
-    // FILL THIS IN!
+    Node *prev= *head;
+
+    if (prev == NULL){ // List is empty
+    	return;
+	}
+	//Initial values
+	Node *current,*next;
+    current=prev->next;
+    next=current->next;
+	prev->next=NULL; // Set the new endpoint
+
+	while (next!= NULL) { 
+
+	    current->next=prev; // Reverse the pointer
+	    prev=current;		// And shift forward
+	    current=next;
+	    if (next->next != NULL) { // We are not at the end
+	    	next=next->next;		// Keep incrementing
+	  	}
+	  	else {					 //we have reached the end
+	  		current->next=prev;  
+	  		next=NULL;			 // Break out of the while loop
+	  	}   
+	}
+	*head=current; // redefine the first value
+    return;
+
 }
 
 
 int main() {
-    Node *test_list = make_node(1, NULL);
+    Node *test_list = make_node(0, NULL);
     test_list->next = make_node(1, NULL);
-    test_list->next->next = make_node(3, NULL);
-    test_list->next->next->next = make_node(1, NULL);
+    test_list->next->next = make_node(2, NULL);
+    test_list->next->next->next = make_node(3, NULL);
     test_list->next->next->next->next = make_node(1, NULL);
+    test_list->next->next->next->next->next = make_node(4, NULL);
+    test_list->next->next->next->next->next->next = make_node(5, NULL);
+
+    printf("\nStarting List: ");
+    print_list(test_list);
 
     int retval = pop(&test_list);
-    push(&test_list, retval+00);
+    push(&test_list, retval+1);
+    printf("\nList after modifying the first value: ");
     print_list(test_list);
+    
     int removed = remove_by_value(&test_list, 1);
+    printf("\nList after removing ones: ");
+    print_list(test_list);
     printf("Removed %i node(s) \n", removed);
-    // remove_by_value(&test_list, 7);
 
-    // reverse(&test_list);
+	removed = remove_by_value(&test_list, 7);    
+    printf("\nList after removing sevens: ");
+    print_list(test_list);
+    printf("Removed %i node(s) \n", removed);
+    
 
+
+    reverse(&test_list);
+    printf("\nReversed List: ");
     print_list(test_list);
 }
