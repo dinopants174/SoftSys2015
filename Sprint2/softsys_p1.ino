@@ -13,6 +13,7 @@
 
 byte sine[] = {127, 134, 142, 150, 158, 166, 173, 181, 188, 195, 201, 207, 213, 219, 224, 229, 234, 238, 241, 245, 247, 250, 251, 252, 253, 254, 253, 252, 251, 250, 247, 245, 241, 238, 234, 229, 224, 219, 213, 207, 201, 195, 188, 181, 173, 166, 158, 150, 142, 134, 127, 119, 111, 103, 95, 87, 80, 72, 65, 58, 52, 46, 40, 34, 29, 24, 19, 15, 12, 8, 6, 3, 2, 1, 0, 0, 0, 1, 2, 3, 6, 8, 12, 15, 19, 24, 29, 34, 40, 46, 52, 58, 65, 72, 80, 87, 95, 103, 111, 119,};
 int t = 0;//time
+boolean toggle0 = 0;
 
 void setup(){
   //set digital pins 0-7 as outputs
@@ -26,11 +27,11 @@ void setup(){
   TCCR0B = 0;// same for TCCR0B
   TCNT0  = 0;//initialize counter value to 0
   // set compare match register for 40khz increments
-  OCR0A = 49;// = (16*10^6) / (40000*8) - 1 (must be <256)
+  OCR0A = 7;// = (16*10^6) / (40000*8) - 1 (must be <256)
   // turn on CTC mode
   TCCR0A |= (1 << WGM01);
   // Set CS11 bit for 8 prescaler
-  TCCR0B |= (1 << CS11); 
+  TCCR0B |= (1 << CS00); 
   // enable timer compare interrupt
   TIMSK0 |= (1 << OCIE0A);
   sei();//enable interrupts
@@ -39,12 +40,18 @@ void setup(){
 
 
 ISR(TIMER0_COMPA_vect){ //40kHz interrupt routine
-  PORTD = sine[t]*0.75 + 3;//send sine wave to DAC, centered around (127/255)*5 = 2.5V
-  t++;//increment t
-  if (t > 99){//reset t to zero
-    t = 0;
+  PORTD = sine[t]*0.75 + 3;
+  t = t+2;
+  if (t > 99){
+  t = 0;
   }
 }
+//  PORTD = sine[t]*0.75 + 3;//send sine wave to DAC, centered around (127/255)*5 = 2.5V
+//  t++;//increment t
+//  if (t > 99){//reset t to zero
+//    t = 0;
+//  }
+
 
 void loop(){
   //do other stuff here
