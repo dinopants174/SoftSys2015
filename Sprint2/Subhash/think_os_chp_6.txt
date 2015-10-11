@@ -1,0 +1,13 @@
+1) free and realloc would be constant because they only work with boundary tags, which are location based and not size based.
+
+malloc and calloc would scale proportionally to the chunk size because malloc checks if allocation can happen based on size, and calloc has to go through and actually clear data.
+
+2)	a) You can get segmentation fault.
+	b) You can't read that data because you didn't allocate it.
+	c) Uncertainty of what data you will get because it is no londer allocated
+	d) You could accidentally write to the stack (no good!)
+	e) Memory leakage - process keeps hogging more and more memory, and then you run out of space to use.
+
+3) The chrome processes are taking the most memory.
+
+4) Each chunk has the same amount of overhead, so by making loads of small chunks, you're unecessarily increasing the memory used for boundary tags and such, meaning wasted space. You can mitigate this by using arrays to allocate small chunks, thus eliminating the need to have so many boundary tags, etc.
