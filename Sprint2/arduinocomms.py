@@ -22,7 +22,7 @@ def button(x):
 cv2.namedWindow('video')
 #switch = '0 : OFF \n1 : ON'
 #cv2.createTrackbar(switch, 'video',0,1,button)
-img = cv2.imread('44088_tauba_large_oval_copper_watering_can.jpg')
+img = cv2.imread('dota.png')
 cv2.imshow('video',img)
 while(True):
     # Capture frame-by-frame
