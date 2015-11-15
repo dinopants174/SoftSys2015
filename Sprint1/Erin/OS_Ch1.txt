@@ -1,0 +1,13 @@
+1) Interpreted Languages don't always make you declare data types, which is rare for compiled languages.
+
+2) Static typing allows the compiler to find errors at compile time before the code ever runs.  Static typing also allows for more efficient use of memory.
+
+3) An example of a static semantic would be if you try to pass too many arguments into a function.
+
+4) If there are bugs in your code, optimization may make them harder to track down.  Optimization also makes it so your code takes longer to compile, so if you are debugging and compiling frequently, you probably want to turn it off.
+
+5) gcc -S will compile C into assembly, so you will get whatever flavor of assembly your processor runs.
+
+6) The complier will probably find the misspelled function name during the linking step, so you will get a linker error.  This misspelled variable name will appear during the static checking phase, which will generate a static semantic error.
+
+7) A segmentation fault occurs when you try to read a location in memory that you are not supposed to read.
