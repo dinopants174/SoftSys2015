@@ -40,18 +40,27 @@ void assign(byte arr1[4], byte arr2[4], byte arr3[4]), byte arr4[4]{
 
 int request(){
   int newm[2][2];
+  int temp[4];
   Wire.requestFrom(1,1,false);
-  Wire.available();
-  newm[0][0] = Wire.read();
+  while(Wire.available()) {
+    temp[0] = Wire.read();
+  }
   Wire.requestFrom(2,1,false);
-  Wire.available();
-  newm[0][1] = Wire.read();
+  while(Wire.available()) {
+    temp[1] = Wire.read();
+  }
   Wire.requestFrom(3,1,false);
-  Wire.available();
-  newm[1][0] = Wire.read();
+  while(Wire.available()) {
+    temp[2] = Wire.read();
+  }
   Wire.requestFrom(4,1,false);
-  Wire.available();
-  newm[1][1] = Wire.read();
+  while(Wire.available()) {
+    temp[3] = Wire.read();
+  }
+  newm[0][0] = temp[0];
+  newm[0][1] = temp[1];
+  newm[1][0] = temp[2];
+  newm[1][1] = temp[3];
   return newm;
   
 }
