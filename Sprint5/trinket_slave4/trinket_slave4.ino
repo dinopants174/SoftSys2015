@@ -1,5 +1,5 @@
 #include <TinyWireS.h>
-#define I2C_SLAVE_ADDR  0xB            // i2c slave address (38)
+#define I2C_SLAVE_ADDR  0xE           // i2c slave address (38)
 
 
 int count = 0;
@@ -57,5 +57,4 @@ void Blink(int led, byte times){ // poor man's display
 
 void requestEvent(){
   TinyWireS.send(res);
-  delay(5000);
 }
