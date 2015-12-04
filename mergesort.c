@@ -1,15 +1,5 @@
-
 #include <stdio.h> 
 #include <stdlib.h> 
-// #include <string.h>
-// #include <unistd.h>
-
-// int Length (int* Array)
-// {
-// 	if (sizeof(Array)==0){return 0;}
-	
-// 	else {return sizeof(Array) / sizeof(Array[0]);}
-// }
 
 // void PrintList (int* A)
 // {
@@ -21,44 +11,42 @@
 // 	}
 // }
 
-void AddAndPop (int* add, int size_add, int** pop, int* size_pop) {
-	add[size_add-1] = (*pop)[0];
+void AddAndPop (int* add, int* size_add, int** pop, int* size_pop) {
+
+	add[*size_add] = (*pop)[0];
+	*size_add += 1;
+
 	if (*size_pop > 0) {		
 		*pop += 1;
-		*size_pop-=1;
+		*size_pop -= 1;
 	} 
-	// PrintList(add);
-	// PrintList(*pop);
 }
 
-int Seperate( int* A, int size_A_bef, int* B, int size_B_bef, int* C, int size_C_bef)
-{
-	printf("%s\n","Seperate");
+int Separate(int* A, int size_A_bef, int* B, int size_B_bef, int* C) {
 	int size_A = size_A_bef;
 	int size_B = size_B_bef;
-	int size_C = size_C_bef;
+	int size_C = 0;
 
 	int preA = A[size_A - 1] <= B[0];
 	int preB = B[size_B - 1] <= A[0];
 
 	if (preA) {
-
 		while (size_A > 0) {
-			AddAndPop(C, size_C, &A, &size_A);
+			AddAndPop(C, &size_C, &A, &size_A);
 		}
 
 		while (size_B > 0) {
-			AddAndPop(C, size_C, &B, &size_B);
+			AddAndPop(C, &size_C, &B, &size_B);
 		}
 
 	} else if (preB) {
 
 		while (size_B > 0) {
-			AddAndPop(C, size_C, &B, &size_B);
+			AddAndPop(C, &size_C, &B, &size_B);
 		}
 
 		while (size_A > 0) {
-			AddAndPop(C, size_C, &A, &size_A);
+			AddAndPop(C, &size_C, &A, &size_A);
 		}
 
 	}
@@ -68,27 +56,29 @@ int Seperate( int* A, int size_A_bef, int* B, int size_B_bef, int* C, int size_C
 
 
 
-int* MergeSort (int* A, int* B, int A_size, int B_size)
+int* MergeSort (int* A, int A_size, int* B,  int B_size)
 {
 
-int C_size= A_size+B_size;
+int size_C = A_size + B_size;
 
 int* C; 
 
 int size_A = A_size;
 int size_B = B_size;
-int sep = Seperate(A, A_size, B, B_size, C, C_size);
-printf("%s\n","Seperate");
-if (sep==0)
-	{
+
+int sep = Separate(A, A_size, B, B_size, C);
+
+	if (sep == 0) {
+
 		int i =0; 
-		while (i < C_size)
+		while (i < size_C)
 		{
-			if (size_A ==0) {AddAndPop(C,i,&B,&size_B);}
-			else if (size_B ==0) {AddAndPop(C,i,&A,&size_B);}
-			else if (A[0]>B[0]) {AddAndPop(C,i,&B,&size_B);}
-			else if (B[0]>A[0]) {AddAndPop(C,i,&B,&size_A);}
-			else {AddAndPop(C,i,&A,&size_A);}
+			int C_size = i; 
+			if (size_A == 0) {AddAndPop(C,&C_size,&B,&size_B);}
+			else if (size_B == 0) {AddAndPop(C,&C_size,&A,&size_B);}
+			else if (A[0]>B[0]) {AddAndPop(C,&C_size,&B,&size_B);}
+			else if (B[0]>A[0]) {AddAndPop(C,&C_size,&B,&size_A);}
+			else {AddAndPop(C,&C_size,&A,&size_A);}
 			i++;
 		}
 	}
@@ -106,7 +96,7 @@ void main() {
 	int E[2]={3,6}; const int E_size=2; int* ptrE=&E[0];
 	int F[2]={9,11};const int F_size=2; int* ptrF=&F[0];
 
-	int* AB=MergeSort(ptrA,ptrB,A_size,B_size); const int AB_size=A_size+B_size;
+	int* AB=MergeSort(ptrA,A_size,ptrB,B_size); const int AB_size=A_size+B_size;
 	// int* CD=MergeSort(C,D,C_size,D_size); CD_size=Length(CD);
 	// int* EF=MergeSort(E,F,E_size,F_size); EF_size=Length(EF);
 	
