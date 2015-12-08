@@ -4,12 +4,21 @@
 
 int count = 0;
 int i;
-byte recieve[2] = {};
-byte arr1[1] = {};
-byte arr2[1] = {};
-byte res = 0;
 bool finished_receive = false;
 bool finished_compute = false;
+byte recieve[2] = {};
+byte* arr1;
+byte* arr2;
+
+void createArray(int size_A, int size_B) {
+	arr1 = (byte*)malloc(sizeof(byte) * size_A);
+	arr2 = (byte*)malloc(sizeof(byte) * size_B);
+}
+
+void freeArray() {
+	free(arr1);
+	free(arr2);
+}
 
 void setup() {  
   TinyWireS.begin(I2C_SLAVE_ADDR); 
@@ -17,10 +26,8 @@ void setup() {
 }
 
 void loop(){
-  byte byteRcvd = 0;
   if (TinyWireS.available() && !finished_receive && !finished_compute){           // got I2C input!
-    byteRcvd = TinyWireS.receive();     // get the byte from master
-    recieve[count] = byteRcvd;
+    recieve[count] = TinyWireS.receive();
     count++;
     if (count > 1){
       finished_receive = true;
@@ -28,24 +35,24 @@ void loop(){
   }
   
   if (finished_receive && !finished_compute){
-    arr1[0] = recieve[0];
-    arr2[0] = recieve[1];
-    MergeSort(&arr1[0], 1, &arr2[0], 1, &recieve[0]);
+
+  	createArray(size_A, size_B);
+
+  	for (int m = 0; m < size_A; m++) {
+    	arr1[m] = recieve[m + 1];
+  	}
+
+  	for (int n = 0; n < size_B; n++) {
+	    arr2[n] = recieve[size_A + n + 1];
+  	}
+
+    MergeSort(&arr1[0], size_A, &arr2[0], size_B, &recieve[0]);
+    
     finished_compute = true;
-    }
+  }
     
   if (finished_receive && finished_compute){
-    }
-}
-
-
-void compute(byte val[4]){
-  res = val[0]*val[1] + val[2]*val[3];
-}
-
-void add(byte val[4]){
-  for (byte i=0; i < 4; i++){  //i<x matches val[x]
-    res += val[i];
+  
   }
 }
 
@@ -62,6 +69,7 @@ void requestEvent(){
   for (i=0; i<2; i++){
     TinyWireS.send(recieve[i]);
   }
+  freeArray();
 //  TinyWireS.send(res);
   delay(5000);
 }
