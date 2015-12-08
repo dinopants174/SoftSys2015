@@ -73,11 +73,17 @@ int sep = Separate(A, A_size, B, B_size, C);
 		while (i < size_C)
 		{
 			int C_size = i; 
-			if (size_A == 0) {AddAndPop(C,&C_size,&B,&size_B);}
-			else if (size_B == 0) {AddAndPop(C,&C_size,&A,&size_B);}
-			else if (A[0]>B[0]) {AddAndPop(C,&C_size,&B,&size_B);}
-			else if (B[0]>A[0]) {AddAndPop(C,&C_size,&A,&size_A);}
-			else {AddAndPop(C,&C_size,&A,&size_A);}
+
+			if (size_A == 0) {
+				AddAndPop(C, &C_size, &B, &size_B);
+			} else if (size_B == 0) {
+				AddAndPop(C, &C_size, &A, &size_A);
+			} else if (A[0]>B[0]) {
+				AddAndPop(C, &C_size, &B, &size_B);
+			} else if (B[0]>=A[0]) {
+				AddAndPop(C, &C_size, &A, &size_A);
+			} 
+
 			i++;
 		}
 	}
@@ -86,7 +92,7 @@ int sep = Separate(A, A_size, B, B_size, C);
 
 void main() {
 
-	int A[3]={4,5,9}; int A_size=3; int* ptrA=&A[0];
+	int A[4]={4,5,9,10}; int A_size=4; int* ptrA=&A[0];
 	int B[3]={3,4,7}; int B_size=3; int* ptrB=&B[0];
 
 	int AB_size=A_size+B_size;
