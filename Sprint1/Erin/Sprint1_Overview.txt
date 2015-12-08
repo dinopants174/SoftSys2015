@@ -9,3 +9,5 @@ The files in this folder:
 7- jukebox.c - The jukebox exercises in CH 2.5 of HFC
 8- find_track.c - Refactored to use regex instead of strstr()
 9- Tee.c - My tee implementation
+10- data_sizes.c - The code from HFC CH4 that shows the sizes of data types on your machine.  The values for my mac are in the comments.
+11- OS_Ch4.txt - Answers to Allen's Questions for the OS book Ch 4
