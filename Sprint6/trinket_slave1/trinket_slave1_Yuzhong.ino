@@ -36,15 +36,7 @@ void loop(){
   
   if (finished_receive && !finished_compute){
 
-  	createArray(size_A, size_B);
-
-  	for (int m = 0; m < size_A; m++) {
-    	arr1[m] = recieve[m + 1];
-  	}
-
-  	for (int n = 0; n < size_B; n++) {
-	    arr2[n] = recieve[size_A + n + 1];
-  	}
+  	populateArray(size_A, size_B);
 
     MergeSort(&arr1[0], size_A, &arr2[0], size_B, &recieve[0]);
     
@@ -54,6 +46,18 @@ void loop(){
   if (finished_receive && finished_compute){
   
   }
+}
+
+void populateArray (int size_A, int size_B) {
+	createArray(size_A, size_B);
+
+  	for (int m = 0; m < size_A; m++) {
+    	arr1[m] = recieve[m + 1];
+  	}
+
+  	for (int n = 0; n < size_B; n++) {
+	    arr2[n] = recieve[size_A + n + 1];
+  	}
 }
 
 void Blink(int led, byte times){ // poor man's display
