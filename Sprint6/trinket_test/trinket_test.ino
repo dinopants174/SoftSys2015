@@ -93,7 +93,9 @@ void TransmitL4 () {
 		Serial.println("Transmitting now slave %d", 1);
 		Wire.beginTransmission(0xB); // transmit to slave address 16
 		Serial.println(res[i]);
-		Wire.write(8);
+		if (i == 0) {
+			Wire.write(8);
+		}
 		Wire.write(res[i]);
 		Wire.endTransmission();
 	}
@@ -105,7 +107,9 @@ void SingleTransmit(int level, int slaveNum) {
 		Serial.println("Transmitting now slave %d", slaveNum);
 		Wire.beginTransmission(0xB + slaveNum - 1); // transmit to slave address 16
 		Serial.println(res[i]);
-		Wire.write(byte(level));
+		if (i == (slaveNum - 1) * level * 2) {
+			Wire.write(byte(level));
+		}		
 		Wire.write(res[i]);
 		Wire.endTransmission();
 	}
@@ -113,50 +117,50 @@ void SingleTransmit(int level, int slaveNum) {
 
 void ReceiveL1() {
 	for (int nodeAddress = 0xB; nodeAddress <= 0x10; nodeAddress++) { 
-		Wire.requestFrom(nodeAddress, 2); 
-		if(Wire.available() == 2) {  
-			for (int i = 0; i < 2; i++) { 
+		Serial.println("*************From slave %d************", nodeAddress);      
+		for (int i = 0; i < 2; i++) {
+			if (Wire.requestFrom(nodeAddress, 1) == 1) {  
 				res[(nodeAddress - 0xB) * 2 + i] = Wire.read();
 				Serial.println(res[(nodeAddress - 0xB) * 2 + i]);
 			}
-			Serial.println("*************************");      
 		}
+		Serial.println("**************************************************");      
 	}
 }
 
 void ReceiveL2() {
 	for (int nodeAddress = 0xB; nodeAddress <= 0xD; nodeAddress++) { 
-		Wire.requestFrom(nodeAddress, 4); 
-		if (Wire.available() == 4) {  
-			for (int i = 0; i < 4; i++) {
+		Serial.println("*************From slave %d************", nodeAddress);      
+		for (int i = 0; i < 4; i++) {
+			if (Wire.requestFrom(nodeAddress, 1) == 1) {  
 				res[(nodeAddress - 0xB) * 4 + i] = Wire.read();
 				Serial.println(res[(nodeAddress - 0xB) * 4 + i]);
 			}
-			Serial.println("*************************");      
 		}
+		Serial.println("**************************************************");      
 	}
 }
 
 void ReceiveL3() {
-	Wire.requestFrom(0xB, 8); 
-	if (Wire.available() == 8) {  
-		for (int i = 0; i < 8; i++) {
+	Serial.println("*************From slave %d************", 1);      
+	for (int i = 0; i < 8; i++) {
+		if (Wire.requestFrom(0xB, 1) == 1) {  
 			res[i] = Wire.read();
 			Serial.println(res[i]);
 		}
-		Serial.println("*************************");      
 	}
+	Serial.println("**************************************************");      
 }
 
 void ReceiveL4() {
-	Wire.requestFrom(0xB, 12); 
-	if (Wire.available() == 12) {  
-		for (int i = 0; i < 12; i++) {
+	Serial.println("*************From slave %d************", 1);      
+	for (int i = 0; i < 12; i++) {
+		if (Wire.requestFrom(0xB, 1) == 1) {  
 			res[i] = Wire.read();
 			Serial.println(res[i]);
 		}
-		Serial.println("*************************");      
 	}
+	Serial.println("**************************************************");      
 }
 
 void PrintList (int* A, int size_A)
