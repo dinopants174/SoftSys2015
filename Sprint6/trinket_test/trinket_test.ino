@@ -2,188 +2,169 @@
 #include <stdio.h> 
 #include <stdlib.h> 
 
-int i;
-int nodeAddress;
-byte array[12] = {1, 8, 253, 28, 17, 134, 58, 27, 65, 82, 102, 20};
-byte res[6][2] = {{0, 0}, {0, 0}, {0, 0}, {0,0}, {0,0}, {0,0}};
-byte C[4] = {};
-byte D[4] = {};
-byte E[4] = {};
-byte F[8] = {};
-byte G[12] = {};
-byte byteReceived1;
-byte byteReceived2;
-bool finished_transmit = false;
-bool finished_receive = false;
+int level;
+bool finished_transmit;
+bool finished_receive;
+byte array[12];
+byte res[12];
 
 void setup() {
-  Serial.begin(9600);
-  Wire.begin(); 
+	Serial.begin(9600);
+	Wire.begin(); 
+	level = 1;
+	finished_transmit = false;
+	finished_receive = false;
+
+	array = {1, 8, 253, 28, 17, 134, 58, 27, 65, 82, 102, 20};
+	res = array;
 }
 
 void loop() {
-  if (!finished_transmit && !finished_receive){
-    Serial.println("*************************");      
-    for (i=0; i<2; i++){
-      Serial.println("Transmitting now slave 1");
-      Wire.beginTransmission(0xB); // transmit to slave address 11
-      Serial.println(array[i]);
-      Wire.write(array[i]);
-      Wire.endTransmission();
-    }
-    for (i=2; i<4; i++){
-      Serial.println("Transmitting now slave 2");
-      Wire.beginTransmission(0xB + 0x1); // transmit to slave address 12
-      Serial.println(array[i]);
-      Wire.write(array[i]);
-      Wire.endTransmission();
-    }
-    for (i=4; i<6; i++){
-      Serial.println("Transmitting now slave 3");
-      Wire.beginTransmission(0xB + 0x2); // transmit to slave address 13
-      Serial.println(array[i]);
-      Wire.write(array[i]);
-      Wire.endTransmission();
-    }
-    for (i=6; i<8; i++){
-      Serial.println("Transmitting now slave 4");
-      Wire.beginTransmission(0xB + 0x3); // transmit to slave address 14
-      Serial.println(array[i]);
-      Wire.write(array[i]);
-      Wire.endTransmission();
-    }
-    for (i=8; i<10; i++){
-      Serial.println("Transmitting now slave 5");
-      Wire.beginTransmission(0xB + 0x4); // transmit to slave address 15
-      Serial.println(array[i]);
-      Wire.write(array[i]);
-      Wire.endTransmission();
-    }
-    for (i=10; i<12; i++){
-      Serial.println("Transmitting now slave 6");
-      Wire.beginTransmission(0xB + 0x5); // transmit to slave address 16
-      Serial.println(array[i]);
-      Wire.write(array[i]);
-      Wire.endTransmission();
-    }
-    
-    Serial.println("I am finished transmitting");
-    Serial.println("*************************");      
-    finished_transmit = true;
-    delay(1000);
- }
-  
-  if (finished_transmit && !finished_receive){
-    for (int nodeAddress = 0xB; nodeAddress <= 0x10; nodeAddress++) { // we are starting from Node address 2
-    Wire.requestFrom(nodeAddress, 2);    // request data from node#
-    if(Wire.available() == 2) {  // if data size is avaliable from nodes
-      byteReceived1 = Wire.read();
-      byteReceived2 = Wire.read(); 
-      Serial.print("Address ");
-      Serial.println(nodeAddress);
-      res[nodeAddress - 0xB][0] = byteReceived1;
-      res[nodeAddress - 0xB][1] = byteReceived2;
-//      res[nodeAddress - 0xB] = byteReceived1;
-//      res[nodeAddress - 0xB + 0x1] = byteReceived2;
-      Serial.println(res[nodeAddress - 0xB][0]);
-      Serial.println(res[nodeAddress - 0xB][1]);
-      Serial.println("*************************");      
-      }
-    }
-    delay(1000);
-    finished_receive = true;
-  }
-  
-  if (finished_transmit && finished_receive){
-    MergeSort(&res[0][0], 2, &res[1][0], 2, &C[0]);
-    MergeSort(&res[2][0], 2, &res[3][0], 2, &D[0]);
-    MergeSort(&res[4][0], 2, &res[5][0], 2, &E[0]);
-    MergeSort(&C[0], 4, &D[0], 4, &F[0]);
-    MergeSort(&F[0], 8, &E[0], 4, &G[0]);
-    Serial.println("***********************");
-    PrintList(&G[0], 12);
-  }
+	if (!finished_transmit && !finished_receive){
+		switch (level) {
+			case 1:
+				TransmitL1();
+			case 2:
+				TransmitL2();
+			case 3:
+				TransmitL3();
+			case 4: 
+				TransmitL4();
+		}
+		
+		finished_transmit = true;
+		delay(1000);
+	}
+
+	if (finished_transmit && !finished_receive){
+		switch (level) {
+			case 1:
+				ReceiveL1();
+				level = 2;
+			case 2:
+				ReceiveL2();
+				level = 3;
+			case 3:
+				ReceiveL3();
+				level = 4;
+			case 4: 
+				ReceiveL4();
+				level = 1;
+		}   
+
+		finished_receive = true;
+		delay(1000);
+	}
+	
+	if (finished_transmit && finished_receive && level == 1){
+		PrintList(&res[0], 12)
+	}
 }
 
+void TransmitL1 () {
+	Serial.println("*************************");   
+	Serial.println("I am finished transmitting");
+	for (int i = 1; i <= 6; i++) {
+		SingleTransmit(1, i);       
+	}
+	Serial.println("*************************");      
+}
 
-void PrintList (byte* A, int size_A)
+void TransmitL2 () {
+	Serial.println("*************************");   
+	Serial.println("I am finished transmitting");
+	for (int i = 1; i <= 3; i++) {
+		SingleTransmit(2, i);       
+	}
+	Serial.println("*************************");      
+}
+
+void TransmitL3 () {
+	Serial.println("*************************");   
+	Serial.println("I am finished transmitting");
+	SingleTransmit(4, i);       
+	Serial.println("*************************");      
+}
+
+void TransmitL4 () {
+	Serial.println("*************************");   
+	Serial.println("I am finished transmitting");
+	for (int i = 0; i < 12; i++) {
+		Serial.println("Transmitting now slave %d", 1);
+		Wire.beginTransmission(0xB); // transmit to slave address 16
+		Serial.println(res[i]);
+		Wire.write(8);
+		Wire.write(res[i]);
+		Wire.endTransmission();
+	}
+	Serial.println("*************************");      
+}
+
+void SingleTransmit(int level, int slaveNum) {
+	for (int i = (slaveNum - 1) * level * 2; i < slaveNum * level * 2; i++) {
+		Serial.println("Transmitting now slave %d", slaveNum);
+		Wire.beginTransmission(0xB + slaveNum - 1); // transmit to slave address 16
+		Serial.println(res[i]);
+		Wire.write(byte(level));
+		Wire.write(res[i]);
+		Wire.endTransmission();
+	}
+}
+
+void ReceiveL1() {
+	for (int nodeAddress = 0xB; nodeAddress <= 0x10; nodeAddress++) { 
+		Wire.requestFrom(nodeAddress, 2); 
+		if(Wire.available() == 2) {  
+			for (int i = 0; i < 2; i++) { 
+				res[(nodeAddress - 0xB) * 2 + i] = Wire.read();
+				Serial.println(res[(nodeAddress - 0xB) * 2 + i]);
+			}
+			Serial.println("*************************");      
+		}
+	}
+}
+
+void ReceiveL2() {
+	for (int nodeAddress = 0xB; nodeAddress <= 0xD; nodeAddress++) { 
+		Wire.requestFrom(nodeAddress, 4); 
+		if (Wire.available() == 4) {  
+			for (int i = 0; i < 4; i++) {
+				res[(nodeAddress - 0xB) * 4 + i] = Wire.read();
+				Serial.println(res[(nodeAddress - 0xB) * 4 + i]);
+			}
+			Serial.println("*************************");      
+		}
+	}
+}
+
+void ReceiveL3() {
+	Wire.requestFrom(0xB, 8); 
+	if (Wire.available() == 8) {  
+		for (int i = 0; i < 8; i++) {
+			res[i] = Wire.read();
+			Serial.println(res[i]);
+		}
+		Serial.println("*************************");      
+	}
+}
+
+void ReceiveL4() {
+	Wire.requestFrom(0xB, 12); 
+	if (Wire.available() == 12) {  
+		for (int i = 0; i < 12; i++) {
+			res[i] = Wire.read();
+			Serial.println(res[i]);
+		}
+		Serial.println("*************************");      
+	}
+}
+
+void PrintList (int* A, int size_A)
 {
 	int i = 0;
  	while (i < size_A)
  	{
-	Serial.println(A[i]);
+	printf("%d\n",A[i]);
 	i++;
-	}
-}
-
-void AddAndPop (byte* add, int* size_add, byte** pop, int* size_pop) {
-	add[*size_add] = (*pop)[0];
-	*size_add += 1;
-
-	if (*size_pop > 0) {		
-		*pop += 1;
-		*size_pop -= 1;
-	} 
-}
-
-int Separate(byte* A, int size_A_bef, byte* B, int size_B_bef, byte* C) {
-	int size_A = size_A_bef;
-	int size_B = size_B_bef;
-	int size_C = 0;
-
-	int preA = A[size_A - 1] <= B[0];
-	int preB = B[size_B - 1] <= A[0];
-
-	if (preA) {
-
-		while (size_A > 0) {
-			AddAndPop(C, &size_C, &A, &size_A);
-		}
-
-		while (size_B > 0) {
-			AddAndPop(C, &size_C, &B, &size_B);
-		}
-
-	} else if (preB) {
-
-		while (size_B > 0) {
-			AddAndPop(C, &size_C, &B, &size_B);
-		}
-
-		while (size_A > 0) {
-			AddAndPop(C, &size_C, &A, &size_A);
-		}
-
-	}
-
-	return (preA || preB);
-}
-
-
-
-void MergeSort (byte* A, int A_size, byte* B, int B_size, byte* C)
-{
-
-int size_C = A_size + B_size;
-
-int size_A = A_size;
-int size_B = B_size;
-
-int sep = Separate(A, A_size, B, B_size, C);
-
-// printf("%d\n", sep);
-	if (sep == 0) {
-
-		int i =0; 
-		while (i < size_C)
-		{
-			int C_size = i; 
-			if (size_A == 0) {AddAndPop(C,&C_size,&B,&size_B);}
-			else if (size_B == 0) {AddAndPop(C,&C_size,&A,&size_A);}
-			else if (A[0]>B[0]) {AddAndPop(C,&C_size,&B,&size_B);}
-			else if (B[0]>A[0]) {AddAndPop(C,&C_size,&A,&size_A);}
-			else {AddAndPop(C,&C_size,&A,&size_A);}
-			i++;
-		}
 	}
 }

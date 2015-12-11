@@ -78,9 +78,9 @@ int sep = Separate(A, A_size, B, B_size, C);
 				AddAndPop(C, &C_size, &B, &size_B);
 			} else if (size_B == 0) {
 				AddAndPop(C, &C_size, &A, &size_A);
-			} else if (A[0]>B[0]) {
+			} else if (A[0] > B[0]) {
 				AddAndPop(C, &C_size, &B, &size_B);
-			} else if (B[0]>=A[0]) {
+			} else if (B[0] >= A[0]) {
 				AddAndPop(C, &C_size, &A, &size_A);
 			} 
 
