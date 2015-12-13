@@ -1,63 +1,23 @@
 #include <TinyWireS.h>
-#define I2C_SLAVE_ADDR  0xB           // i2c slave address (38)
-
+#define I2C_SLAVE_ADDR  0x10           // i2c slave address (38)
+#define TWI_RX_BUFFER_SIZE ( 16 )
 
 int count = 0;
 int i;
-bool finished_receive = false;
-bool finished_compute = false;
-byte recieve[2] = {};
+int arr1_size;
+int res_count = 0;
+byte recieve_buffer[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 byte* arr1;
 byte* arr2;
-
-void createArray(int size_A, int size_B) {
-	arr1 = (byte*)malloc(sizeof(byte) * size_A);
-	arr2 = (byte*)malloc(sizeof(byte) * size_B);
-}
-
-void freeArray() {
-	free(arr1);
-	free(arr2);
-}
+byte* arr3;
 
 void setup() {  
   TinyWireS.begin(I2C_SLAVE_ADDR); 
+  TinyWireS.onReceive(receiveEvent);
   TinyWireS.onRequest(requestEvent);
 }
 
 void loop(){
-  if (TinyWireS.available() && !finished_receive && !finished_compute){           // got I2C input!
-    recieve[count] = TinyWireS.receive();
-    count++;
-    if (count > 1){
-      finished_receive = true;
-    }
-  }
-  
-  if (finished_receive && !finished_compute){
-
-  	populateArray(size_A, size_B);
-
-    MergeSort(&arr1[0], size_A, &arr2[0], size_B, &recieve[0]);
-    
-    finished_compute = true;
-  }
-    
-  if (finished_receive && finished_compute){
-  
-  }
-}
-
-void populateArray (int size_A, int size_B) {
-	createArray(size_A, size_B);
-
-  	for (int m = 0; m < size_A; m++) {
-    	arr1[m] = recieve[m + 1];
-  	}
-
-  	for (int n = 0; n < size_B; n++) {
-	    arr2[n] = recieve[size_A + n + 1];
-  	}
 }
 
 void Blink(int led, byte times){ // poor man's display
@@ -70,13 +30,47 @@ void Blink(int led, byte times){ // poor man's display
 }
 
 void requestEvent(){
-  for (i=0; i<2; i++){
-    TinyWireS.send(recieve[i]);
-  }
-  freeArray();
-//  TinyWireS.send(res);
-  delay(5000);
+    TinyWireS.send(arr3[res_count]);
+    recieve_buffer[res_count] = 0;
+    res_count++;
+    if (res_count > count-1){
+        res_count = 0;
+        count = 0;
+        freeArray();
+    }
 }
+
+void receiveEvent(uint8_t howMany)
+{
+    if (howMany < 1){
+        // Sanity-check
+        return;
+    }
+    if (howMany > TWI_RX_BUFFER_SIZE){
+        // Also insane number
+        return;
+    }
+    if (!howMany){
+      return;
+    }
+    
+    arr1_size = TinyWireS.receive();
+    howMany--;
+    
+    while(howMany--){
+      recieve_buffer[count] = TinyWireS.receive();
+      count++;
+    }
+    createArray(arr1_size, count-arr1_size, count);
+    for (i=0; i<arr1_size; i++){
+      arr1[i] = recieve_buffer[i];
+    }
+    for (i=arr1_size; i<count; i++){
+      arr2[i-arr1_size] = recieve_buffer[i];
+    }
+    MergeSort(arr1, arr1_size, arr2, count-arr1_size, arr3);
+}
+
 
 void AddAndPop (byte* add, int* size_add, byte** pop, int* size_pop) {
 	add[*size_add] = (*pop)[0];
@@ -150,3 +144,14 @@ int sep = Separate(A, A_size, B, B_size, C);
 	}
 }
 
+void createArray(int size_A, int size_B, int size_C) {
+	arr1 = (byte*)malloc(sizeof(byte) * size_A);
+	arr2 = (byte*)malloc(sizeof(byte) * size_B);
+        arr3 = (byte*)malloc(sizeof(byte) * size_C);
+}
+
+void freeArray() {
+	free(arr1);
+	free(arr2);
+        free(arr3);
+}
