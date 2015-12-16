@@ -78,6 +78,13 @@ defined as 0 in the preprocessing phase.
 
 void singleMergeSortLoop() {
   if (!finished_transmit && !finished_receive) {
+    // print out statement for demo only
+    if (DEMO) {
+      delay(DELAY);
+      Serial.println("Starts transmitting in mode single mergesort ");
+      PrintLine();
+    }
+
     for (int i = 0; i < SINGLE_SIZE; i++) {
       if (DEMO) Serial.print("Transmitting slave 1");
 
@@ -142,6 +149,14 @@ defined as 1 in the preprocessing phase.
 
 void matrixLoop() {
   if (!finished_transmit && !finished_receive) {
+    // print out statement for demo only
+    if (DEMO) {
+      delay(DELAY);
+      Serial.println("Starts transmitting in mode matrix multiplication ");
+      PrintLine();
+    }
+
+
 
     // indicates transmition is finished
     finished_transmit = true;
