@@ -149,6 +149,7 @@ void TransmitFinal () {
 
     // write the size of array 1
     if (i == 0) {
+      Wire.write(2);
       Wire.write(8);
     }
 
@@ -176,6 +177,7 @@ void SingleTransmit(int level, int slaveNum) {
     Wire.beginTransmission(SLAVEONE + slaveNum - 1); // transmit to slave address 16
 
     if (i == (slaveNum - 1) * level * COMPARE_NUM) {
+      Wire.write(2);
       Wire.write(byte(level));
     }   
 
