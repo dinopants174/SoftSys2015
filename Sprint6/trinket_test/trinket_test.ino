@@ -4,10 +4,13 @@
  
 #define ARRAY_SIZE 12 // merge sort size
 #define DELAY 2000 // standard delay time in Demo mode
-#define DEMO 1 // indication of Demo mode
 #define COMPARE_NUM 2 // the number of arrays that we are comparing
 #define REQUEST_SIZE 1 // number of request each time
 #define ROUNDING 0.5 // used to round pow() which returns a float before casting to int
+
+// mode encoding
+#define DEMO 1 // indication of Demo mode
+#define OPCODE 2
 
 // slave encoding
 #define SLAVEONE 0XB
@@ -35,7 +38,7 @@ void setup() {
   level = 1;
   finished_transmit = false;
   finished_receive = false;
-  delay(5000);
+  delay(DELAY);
 }
 
 /* 
@@ -44,6 +47,109 @@ loop phase
 
 */
 void loop() {
+
+  if (OPCODE == 0) {
+    singleMergeSortLoop();
+  } else if (OPCODE == 1) {
+    matrixLoop();
+  } else if (OPCODE == 2) {
+    mergeSortLoop();
+  }
+      
+}
+
+/* 
+
+singleMergeSortLoop() behaves as the 
+backbone of a single merge sorting. 
+This method get called when opcode is 
+defined as 0 in the preprocessing phase.
+
+*/
+
+void singleMergeSortLoop() {
+  if (!finished_transmit && !finished_receive) {
+
+    // indicates transmition is finished
+    finished_transmit = true;
+
+    // print out statement for demo only
+    if (DEMO) {
+      Serial.println("Transmitting finished");
+      PrintLine();
+      delay(DELAY);
+    }
+  }
+
+  if (finished_transmit && !finished_receive) {
+
+    // indicates transmition is finished
+    finished_receive = true;
+    
+    // print out statement for demo only
+    if (DEMO) {
+      Serial.println("Receiving finished");
+      PrintLine();
+      delay(DELAY);
+    } 
+  }
+
+  // reset transmission and receiving values
+  finished_transmit = false;
+  finished_receive = false;
+}
+
+/* 
+
+matrixLoop() behaves as the 
+backbone of a matrix multiplication. 
+This method get called when opcode is 
+defined as 1 in the preprocessing phase.
+
+*/
+
+void matrixLoop() {
+  if (!finished_transmit && !finished_receive) {
+
+    // indicates transmition is finished
+    finished_transmit = true;
+
+    // print out statement for demo only
+    if (DEMO) {
+      Serial.println("Transmitting finished");
+      PrintLine();
+      delay(DELAY);
+    }
+  }
+
+  if (finished_transmit && !finished_receive) {
+    
+    // indicates transmition is finished
+    finished_receive = true;
+    
+    // print out statement for demo only
+    if (DEMO) {
+      Serial.println("Receiving finished");
+      PrintLine();
+      delay(DELAY);
+    } 
+  }
+
+  // reset transmission and receiving values
+  finished_transmit = false;
+  finished_receive = false;
+}
+
+/* 
+
+mergeSortLoop() behaves as the backbone
+of merge sorting. This method get called 
+when opcode is defined as 2 in the 
+preprocessing phase.
+
+*/
+
+void mergeSortLoop() {
   if (!finished_transmit && !finished_receive){
     // print out statement for demo only
     if (DEMO) {
@@ -70,8 +176,8 @@ void loop() {
     // print out statement for demo only
     if (DEMO) {
       Serial.println("Transmitting finished");
-      delay(DELAY);
       PrintLine();
+      delay(DELAY);
     }
   }
 
@@ -104,16 +210,15 @@ void loop() {
     
     // print out statement for demo only
     if (DEMO) {
-      PrintLine();
       Serial.println("Receiving finished");
       PrintLine();
-      delay(1000);
+      delay(DELAY);
     } 
   }
   
   // reset transmission and receiving values
   finished_transmit = false;
-  finished_receive = false;      
+  finished_receive = false;
 }
 
 /*
@@ -149,6 +254,7 @@ void TransmitFinal () {
 
     // write the size of array 1
     if (i == 0) {
+      Wire.write();
       Wire.write(8);
     }
 
