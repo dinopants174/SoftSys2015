@@ -7,6 +7,7 @@
 #define DEMO 1 // indication of Demo mode
 #define COMPARE_NUM 2 // the number of arrays that we are comparing
 #define REQUEST_SIZE 1 // number of request each time
+#define ROUNDING 0.5 // used to round pow() which returns a float before casting to int
 
 // slave encoding
 #define SLAVEONE 0XB
@@ -34,6 +35,7 @@ void setup() {
   level = 1;
   finished_transmit = false;
   finished_receive = false;
+  delay(5000);
 }
 
 /* 
@@ -43,7 +45,6 @@ loop phase
 */
 void loop() {
   if (!finished_transmit && !finished_receive){
-
     // print out statement for demo only
     if (DEMO) {
       delay(DELAY);
@@ -110,14 +111,9 @@ void loop() {
     } 
   }
   
-  // prints the list if merge sort is finished
-  if (finished_transmit && finished_receive && level == 1){
-    PrintList(&res[0], 12);
-  }
-
   // reset transmission and receiving values
   finished_transmit = false;
-  finished_receive = false;        
+  finished_receive = false;      
 }
 
 /*
@@ -127,7 +123,7 @@ to perform transmitting.
 
 */
 void Transmit (int slaveNum, int level) {
-  int rep = pow(COMPARE_NUM, level - 1); // repeat number for each slave
+  int rep = pow(COMPARE_NUM, level - 1) + ROUNDING; // repeat number for each slave
   // iterate through the slaves to perform single transmitting
   for (int i = 1; i <= slaveNum; i++) { 
     SingleTransmit(rep, i);       
@@ -146,11 +142,10 @@ void TransmitFinal () {
 
     // print out statement for demo only
     if (DEMO) {
-      Serial.print("Transmitting slave 1");
+      Serial.println("Transmitting slave 11");
     }
 
     Wire.beginTransmission(SLAVEONE); // transmit to slave address 0XB
-    if (DEMO) Serial.println(res[i]); // print out statement for demo only
 
     // write the size of array 1
     if (i == 0) {
@@ -175,7 +170,7 @@ void SingleTransmit(int level, int slaveNum) {
 
     if (DEMO) {
       Serial.print("Transmitting slave ");
-      Serial.println(slaveNum);
+      Serial.println(10 + slaveNum);
     }
 
     Wire.beginTransmission(SLAVEONE + slaveNum - 1); // transmit to slave address 16
@@ -196,11 +191,13 @@ to perform receiving.
 
 */
 
-void Receive(int slaveNum, level) {
+void Receive(int slaveNum, int level) {
   // iterates through the slaves as specified by slave number
   for (int nodeAddress = SLAVEONE; nodeAddress <= slaveNum; nodeAddress++) { 
     if (DEMO) PrintRecSlave(nodeAddress); // print out statement for demo only
-    int rep = pow(COMPARE_NUM, level); // get the repeat number
+    int rep = pow(COMPARE_NUM, level) + ROUNDING; // get the repeat number
+    Serial.print("Rep value: ");
+    Serial.println(rep);
     for (int i = 0; i < rep; i++) {
       //
       if (Wire.requestFrom(nodeAddress, REQUEST_SIZE) == REQUEST_SIZE) {  
@@ -256,7 +253,7 @@ receives it
 
 void PrintRecSlave(int nodeAddress) {
   Serial.print("Receive from slave "); 
-  Serial.println(nodeAddress) 
+  Serial.println(nodeAddress); 
 }
 
 /*
