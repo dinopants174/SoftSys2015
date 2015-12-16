@@ -1,13 +1,14 @@
 #include <Wire.h>
 #include <stdio.h> 
 #include <stdlib.h> 
+ 
+#define ARRAY_SIZE 12 // merge sort size
+#define DELAY 2000 // standard delay time in Demo mode
+#define DEMO 1 // indication of Demo mode
+#define COMPARE_NUM 2 // the number of arrays that we are comparing
+#define REQUEST_SIZE 1 // number of request each time
 
-#define ARRAY_SIZE 12
-#define DELAY 2000
-#define DEMO 1
-#define COMPARE_NUM 2
-#define REQUEST_SIZE 1
-
+// slave encoding
 #define SLAVEONE 0XB
 #define SLAVETWO 0XC
 #define SLAVETHREE 0XD
@@ -15,22 +16,35 @@
 #define SLAVEFIVE 0XF
 #define SLAVESIX 0X10
 
-int level;
-bool finished_transmit;
-bool finished_receive;
-byte res[ARRAY_SIZE] = {1, 8, 253, 28, 17, 134, 58, 27, 65, 82, 102, 20};
+int level; // indicates the level of current phase 
+bool finished_transmit; // indicates state of transmitting
+bool finished_receive; // indicates state of receiving
+// initialization of the array to be sorted
+byte res[ARRAY_SIZE] = {1, 8, 253, 28, 17, 134, 58, 27, 65, 82, 102, 20}; 
 
+/* 
+
+setup phase
+
+*/
 void setup() {
   Serial.begin(9600);
   Wire.begin(); 
+
   level = 1;
   finished_transmit = false;
   finished_receive = false;
 }
 
+/* 
+
+loop phase
+
+*/
 void loop() {
   if (!finished_transmit && !finished_receive){
 
+    // print out statement for demo only
     if (DEMO) {
       delay(DELAY);
       Serial.print("Current level: ");
@@ -38,6 +52,7 @@ void loop() {
       PrintLine();
     }
 
+    // a nested level choosing statement
     if (level == 1) {
         Transmit(6, level);
       } else if (level == 2) {
@@ -48,8 +63,10 @@ void loop() {
         TransmitFinal();
       }
 
+    // indicates transmition is finished
     finished_transmit = true;
 
+    // print out statement for demo only
     if (DEMO) {
       Serial.println("Transmitting finished");
       delay(DELAY);
@@ -59,12 +76,14 @@ void loop() {
 
   if (finished_transmit && !finished_receive){
 
+    // print out statement for demo only
     if (DEMO) {
       delay(DELAY);
       PrintLine();
       Serial.println("Receiving starts");
     }
 
+    // a nested level choosing statement
     if (level == 1) {
       Receive(SLAVESIX, level);
       level = 2;
@@ -79,8 +98,10 @@ void loop() {
       level = 1;
     } 
 
+    // indicates transmition is finished
     finished_receive = true;
     
+    // print out statement for demo only
     if (DEMO) {
       PrintLine();
       Serial.println("Receiving finished");
@@ -89,39 +110,65 @@ void loop() {
     } 
   }
   
+  // prints the list if merge sort is finished
   if (finished_transmit && finished_receive && level == 1){
     PrintList(&res[0], 12);
   }
 
+  // reset transmission and receiving values
   finished_transmit = false;
   finished_receive = false;        
 }
 
+/*
+
+Transmit() takes the slave number and current value
+to perform transmitting.
+
+*/
 void Transmit (int slaveNum, int level) {
-  int rep = pow(COMPARE_NUM, level - 1);
-  for (int i = 1; i <= slaveNum; i++) {
+  int rep = pow(COMPARE_NUM, level - 1); // repeat number for each slave
+  // iterate through the slaves to perform single transmitting
+  for (int i = 1; i <= slaveNum; i++) { 
     SingleTransmit(rep, i);       
   }
 }
 
-void TransmitFinal () {
-  for (int i = 0; i < 12; i++) {
+/*
 
+TransmitFinal() transimits the final level in the 
+mergesort phase. 
+
+*/
+
+void TransmitFinal () {
+  for (int i = 0; i < ARRAY_SIZE; i++) { // transmit all the element in the array
+
+    // print out statement for demo only
     if (DEMO) {
       Serial.print("Transmitting slave 1");
     }
 
-    Wire.beginTransmission(SLAVEONE); // transmit to slave address 16
-    if (DEMO) Serial.println(res[i]);
+    Wire.beginTransmission(SLAVEONE); // transmit to slave address 0XB
+    if (DEMO) Serial.println(res[i]); // print out statement for demo only
 
+    // write the size of array 1
     if (i == 0) {
       Wire.write(8);
     }
 
-    Wire.write(res[i]);
-    Wire.endTransmission();
+    Wire.write(res[i]); // perform transmitting
+    Wire.endTransmission(); // end transmitting
   }
 }
+
+/*
+
+SingleTransmit() takes the current level and
+number of slaves to perform a single transmission
+on a single slave
+
+*/
 
 void SingleTransmit(int level, int slaveNum) {
   for (int i = (slaveNum - 1) * level * COMPARE_NUM; i < slaveNum * level * COMPARE_NUM; i++) {
@@ -142,11 +189,20 @@ void SingleTransmit(int level, int slaveNum) {
   }
 }
 
+/*
+
+Receive() takes the slave number and current value
+to perform receiving.
+
+*/
+
 void Receive(int slaveNum, level) {
+  // iterates through the slaves as specified by slave number
   for (int nodeAddress = SLAVEONE; nodeAddress <= slaveNum; nodeAddress++) { 
-    PrintRecSlave(nodeAddress);
-    int rep = pow(COMPARE_NUM, level);
+    if (DEMO) PrintRecSlave(nodeAddress); // print out statement for demo only
+    int rep = pow(COMPARE_NUM, level); // get the repeat number
     for (int i = 0; i < rep; i++) {
+      //
       if (Wire.requestFrom(nodeAddress, REQUEST_SIZE) == REQUEST_SIZE) {  
         res[(nodeAddress - SLAVEONE) * rep + i] = Wire.read();
         if (DEMO) Serial.println(res[(nodeAddress - SLAVEONE) * rep + i]);
@@ -155,29 +211,61 @@ void Receive(int slaveNum, level) {
   }
 }
 
+/*
+
+ReceiveFinal() receives the final level in the 
+mergesort phase. 
+
+*/
+
 void ReceiveFinal() {
-  PrintRecSlave(SLAVEONE);
-  for (int i = 0; i < ARRAY_SIZE; i++) {
+  if (DEMO) PrintRecSlave(SLAVEONE); // prints out statement for demo only
+  for (int i = 0; i < ARRAY_SIZE; i++) { // iterates through all the element in the array
+    //receives a byte at a time
     if (Wire.requestFrom(SLAVEONE, REQUEST_SIZE) == REQUEST_SIZE) {  
       res[i] = Wire.read();
-      if (DEMO) Serial.println(res[i]);
+      if (DEMO) Serial.println(res[i]); // print out statement for demo only
     }
   }
 }
+
+/*
+
+PrintList() get the size of the array
+and a pointer to the array to print
+out all the elements inside the array
+
+*/
 
 void PrintList (byte* A, int size_A) {
   int i = 0;
   while (i < size_A)
   {
     Serial.println(A[i]);
-  i++;
+    i++;
   }
 }
+
+/*
+
+PrintRecSlave() get the address of the slave 
+and prints out the byte each time master
+receives it
+
+*/
 
 void PrintRecSlave(int nodeAddress) {
   Serial.print("Receive from slave "); 
   Serial.println(nodeAddress) 
 }
+
+/*
+
+PrintLine() prints out a line of '*'
+to make the print statement more
+distinguishing 
+
+*/
 
 void PrintLine() {
   Serial.println("********************");
