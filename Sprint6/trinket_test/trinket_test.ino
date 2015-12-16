@@ -1,16 +1,23 @@
 #include <Wire.h>
 #include <stdio.h> 
 #include <stdlib.h> 
- 
-#define ARRAY_SIZE 12 // merge sort size
+
+// whole system parameters 
 #define DELAY 2000 // standard delay time in Demo mode
-#define COMPARE_NUM 2 // the number of arrays that we are comparing
 #define REQUEST_SIZE 1 // number of request each time
 #define ROUNDING 0.5 // used to round pow() which returns a float before casting to int
 
+// merge sort parameters
+#define ARRAY_SIZE 12 // merge sort size
+#define COMPARE_NUM 2 // the number of arrays that we are comparing
+
+// single merge sort parameters
+#define SINGLE_SIZE 6 // single merge sort size
+#define SINGLE_FIRST_ARRAY 3 // the size of fisrt array to be sorted
+
 // mode encoding
-#define DEMO 1 // indication of Demo mode
-#define OPCODE 2
+#define DEMO 1 // indication of demo mode
+#define OPCODE 2 // operation code
 
 // slave encoding
 #define SLAVEONE 0XB
@@ -23,8 +30,12 @@
 int level; // indicates the level of current phase 
 bool finished_transmit; // indicates state of transmitting
 bool finished_receive; // indicates state of receiving
+
 // initialization of the array to be sorted
 byte res[ARRAY_SIZE] = {1, 8, 253, 28, 17, 134, 58, 27, 65, 82, 102, 20}; 
+
+// initialization of two sorted array to be single sorted by one slave
+byte singleRes[SINGLE_SIZE] = {3, 67, 98, 85, 101};
 
 /* 
 
@@ -47,15 +58,13 @@ loop phase
 
 */
 void loop() {
-
   if (OPCODE == 0) {
     singleMergeSortLoop();
   } else if (OPCODE == 1) {
     matrixLoop();
   } else if (OPCODE == 2) {
     mergeSortLoop();
-  }
-      
+  }      
 }
 
 /* 
@@ -69,6 +78,20 @@ defined as 0 in the preprocessing phase.
 
 void singleMergeSortLoop() {
   if (!finished_transmit && !finished_receive) {
+    for (int i = 0; i < SINGLE_SIZE; i++) {
+      if (DEMO) Serial.print("Transmitting slave 1");
+
+      Wire.beginTransmission(SLAVEONE); // transmit to slave address 0XB
+
+      if (i == 0) {
+        Wire.write(opcode);
+        Wire.write(SINGLE_FIRST_ARRAY);
+      }   
+
+      Wire.write(singleRes[i]);
+      Wire.endTransmission();
+    }
+
 
     // indicates transmition is finished
     finished_transmit = true;
@@ -82,6 +105,15 @@ void singleMergeSortLoop() {
   }
 
   if (finished_transmit && !finished_receive) {
+    int nodeAddress = SLAVEONE;
+    if (DEMO) PrintRecSlave(nodeAddress); // print out statement for demo only
+    for (int i = 0; i < SINGLE_SIZE; i++) {
+      //
+      if (Wire.requestFrom(nodeAddress, REQUEST_SIZE) == REQUEST_SIZE) {  
+        singleRes[i] = Wire.read();
+        if (DEMO) Serial.println(singleRes[i]);
+      }
+    }
 
     // indicates transmition is finished
     finished_receive = true;
@@ -292,6 +324,33 @@ void SingleTransmit(int level, int slaveNum) {
 
 /*
 
+DemoTransmit() takes the current level and
+number of slaves to perform a single transmission
+on a single slave
+
+*/
+
+void DemoTransmit(int level, int slaveNum) {
+  for (int i = (slaveNum - 1) * level * COMPARE_NUM; i < slaveNum * level * COMPARE_NUM; i++) {
+
+    if (DEMO) {
+      Serial.print("Transmitting slave ");
+      Serial.println(10 + slaveNum);
+    }
+
+    Wire.beginTransmission(SLAVEONE + slaveNum - 1); // transmit to slave address 16
+
+    if (i == (slaveNum - 1) * level * COMPARE_NUM) {
+      Wire.write(byte(level));
+    }   
+
+    Wire.write(res[i]);
+    Wire.endTransmission();
+  }
+}
+
+/*
+
 Receive() takes the slave number and current value
 to perform receiving.
 
@@ -302,8 +361,6 @@ void Receive(int slaveNum, int level) {
   for (int nodeAddress = SLAVEONE; nodeAddress <= slaveNum; nodeAddress++) { 
     if (DEMO) PrintRecSlave(nodeAddress); // print out statement for demo only
     int rep = pow(COMPARE_NUM, level) + ROUNDING; // get the repeat number
-    Serial.print("Rep value: ");
-    Serial.println(rep);
     for (int i = 0; i < rep; i++) {
       //
       if (Wire.requestFrom(nodeAddress, REQUEST_SIZE) == REQUEST_SIZE) {  
