@@ -1,0 +1,10 @@
+1) Handle interrupts to the normal instruction cycle.
+
+2) The program counter, flag registor, and saved registors are what is stored.
+
+3) The interrupt implies that the stopped process will be resumed, but if it is not and the kernel decides to change which process takes over, it is called a context switch.
+
+4) Disk request - the handler figures out which process made the request, unblocks it into the ready mode
+
+5) Because the process will most likely block before its time slice is complete, so in order to prevent the process from sitting there waiting forever, it makes sense to get it what it needs and then send it on its way.
+

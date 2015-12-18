@@ -1,0 +1,19 @@
+1) Odds are the program is jumping to the next instruction.
+
+2) The issue is that the CPU has to spend 20x the time it takes to initiate a new instruct to "fetch" and "load" instructions from memory.
+Caches are faster than trying to do all this from memory, and make the waiting time drop.
+
+3) for 50%: (.5)(1ns) + (.5)(10ns) = 5.5ns
+   for 90%: (.9)(1ns) + (.1)(10ns) = 1ns
+
+4) My guess is that if/then statements would increase locality because the program knows it can load both possible outcomes into the cache.
+
+5) If you improve locality, then you are making sure you are accessing either the same data or data which is always nearby other data you're working with. If this is the case, you have little need to actually cache, thus it is not cache aware.
+
+6) Based on this link: http://ark.intel.com/products/family/79318/Intel-High-End-Desktop-Processors#@Desktop I estimate a 1M Cache costs ~138.66
+
+7) They are more complex because there is more time available to make decisions.
+
+8) You could try to avoid thrashing by making sure processes have a timeout or a system which only allows the process to access certain pages for a certain time limit before allowing another process to take over.
+
+After running the graph_data, it's clear that my computer's cache accessing exponentially increases at around 2^23 as the stride gets larger. This means you don't want contiguos memory blocks because it means when you try to access it, you'll be jumping all over the place.
