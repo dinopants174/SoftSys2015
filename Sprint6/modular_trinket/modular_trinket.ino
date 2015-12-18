@@ -1,6 +1,7 @@
 #include <TinyWireS.h>
 #define I2C_SLAVE_ADDR  0x10           // i2c slave address (38)
 #define TWI_RX_BUFFER_SIZE ( 16 )
+#define LED 1
 
 int count = 0;
 int i;
@@ -15,6 +16,7 @@ byte* arr2;
 byte* arr3;
 
 void setup() {  
+  pinMode(LED, OUTPUT);
   TinyWireS.begin(I2C_SLAVE_ADDR); 
   TinyWireS.onReceive(receiveEvent);
   TinyWireS.onRequest(requestEvent);
@@ -23,23 +25,25 @@ void setup() {
 void loop(){
 }
 
-void Blink(int led, byte times){ // poor man's display
-  for (byte i=0; i< times; i++){
+void Blink(int led, int times){ // poor man's display
+  for (int i=0; i< times; i++){
     digitalWrite(led,HIGH);
-    delay (500);
+    delay (1000);
     digitalWrite(led,LOW);
-    delay (500);
+    delay (1000);
   }
 }
 
 void requestEvent(){
 	if (op_code == 1){
+                Blink(LED, 1);
 		TinyWireS.send(res);
 		for (int i=0; i<4; i++){
 			matrix_buffer[i] = 0;
 		}
 	}
 	if (op_code == 2){
+            Blink(LED, 1);
 	    TinyWireS.send(arr3[res_count]);
 	    mergesort_buffer[res_count] = 0;
 	    res_count++;

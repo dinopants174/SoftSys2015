@@ -3,7 +3,7 @@
 #include <stdlib.h> 
 
 // whole system parameters 
-#define DELAY 2000 // standard delay time in Demo mode
+#define DELAY 500 // standard delay time in Demo mode
 #define REQUEST_SIZE 1 // number of request each time
 #define ROUNDING 0.5 // used to round pow() which returns a float before casting to int
 
@@ -59,7 +59,7 @@ void setup() {
   level = 1;
   finished_transmit = false;
   finished_receive = false;
-  delay(DELAY);
+  delay(5000);
 }
 
 /* 
